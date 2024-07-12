@@ -1,125 +1,242 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:custom_navigation_bar/custom_navigation_bar.dart';
+// ignore: depend_on_referenced_packages
+import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:provider/provider.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import '/providers/user_provider.dart';
+import '/src/theme.dart';
+import '/src/navigation.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  // Turn off the # in the URLs on the web
+  usePathUrlStrategy();
+
+  //Handle erros
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+    if (kReleaseMode) {
+      exit(1);
+    }
+  };
+
+  runApp(
+    //user MultiProvider to add provider to widget tree
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => UserProvider(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return MaterialApp.router(
+      routerConfig: goRouter,
+      debugShowCheckedModeBanner: false,
+      title: 'Drawly',
+      theme: AppTheme.lightTheme(),
+      //darkTheme: AppTheme.lightTheme(),
+      //Remove Scroll Glow
+      builder: (context, child) {
+        return ScrollConfiguration(
+          behavior: RemoveScrollGlow(),
+          child: child!,
+        );
+      },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+// Stateful navigation based on:
+// https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_shell_route.dart
+class ScaffoldWithNestedNavigation extends StatelessWidget {
+  const ScaffoldWithNestedNavigation({
+    Key? key,
+    required this.navigationShell,
+  }) : super(
+            key: key ?? const ValueKey<String>('ScaffoldWithNestedNavigation'));
+  final StatefulNavigationShell navigationShell;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  void goBranch(int index) {
+    navigationShell.goBranch(
+      index,
+      // A common pattern when using bottom navigation bars is to support
+      // navigating to the initial location when tapping the item that is
+      // already active. This example demonstrates how to support this behavior,
+      // using the initialLocation parameter of goBranch.
+      initialLocation: index == navigationShell.currentIndex,
+    );
+  }
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      //Check if screen size is less than 450px to display Scaffold as ScaffoldWithNavigationBar
+      if (constraints.maxWidth < 450) {
+        return ScaffoldWithNavigationBar(
+          navigationShell,
+          navigationShell.currentIndex,
+          goBranch,
+        );
+        //If screen is greater than 450px, display Scaffold as ScaffoldWithNavigationRail
+      } else {
+        return ScaffoldWithNavigationRail(
+          body: navigationShell,
+          selectedIndex: navigationShell.currentIndex,
+          onDestinationSelected: goBranch,
+        );
+      }
     });
   }
+}
+
+//ScaffoldWithNavigationBar
+class ScaffoldWithNavigationBar extends StatefulWidget {
+  final Widget body;
+  final int selectedIndex;
+  final Function(int) onDestinationSelected;
+
+  const ScaffoldWithNavigationBar(
+      this.body, this.selectedIndex, this.onDestinationSelected,
+      {super.key});
+
+  @override
+  State<ScaffoldWithNavigationBar> createState() =>
+      _ScaffoldWithNavigationBarState();
+}
+
+class _ScaffoldWithNavigationBarState extends State<ScaffoldWithNavigationBar> {
+  @override
+  Widget build(BuildContext context) {
+    Widget body = widget.body;
+    int selectedIndex = widget.selectedIndex;
+    Function(int) onDestinationSelecteds = widget.onDestinationSelected;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
+      body: body,
+      bottomNavigationBar: CustomNavigationBar(
+        iconSize: 25.0,
+        selectedColor: drawlyBlack.shade900,
+        strokeColor: drawlyBlack.shade800,
+        unSelectedColor: drawlyBlack.shade500,
+        backgroundColor: drawlyBlack.shade100,
+        bubbleCurve: Curves.elasticIn,
+        currentIndex: selectedIndex,
+        onTap: onDestinationSelecteds,
+        items: [
+          CustomNavigationBarItem(
+            icon: Icon(MdiIcons.fromString('artboard')),
+            selectedIcon: Icon(MdiIcons.fromString('artboard')),
+            title: Text(
+              "Canvas",
+              style: AppTheme.buttonNavigationText(),
+            ),
+            selectedTitle: Text(
+              "Canvas",
+              style: AppTheme.buttonNavigationSelectedText(),
+            ),
+          ),
+          CustomNavigationBarItem(
+            icon: Icon(MdiIcons.fromString('file-multiple')),
+            selectedIcon: Icon(MdiIcons.fromString('file-multiple')),
+            title: Text(
+              "My Drawings",
+              style: AppTheme.buttonNavigationText(),
+            ),
+            selectedTitle: Text(
+              "My Drawings",
+              style: AppTheme.buttonNavigationSelectedText(),
+            ),
+          ),
+          CustomNavigationBarItem(
+            icon: Icon(MdiIcons.fromString('account')),
+            selectedIcon: Icon(MdiIcons.fromString('account')),
+            title: Text(
+              "Me",
+              style: AppTheme.buttonNavigationText(),
+            ),
+            selectedTitle: Text(
+              "Me",
+              style: AppTheme.buttonNavigationSelectedText(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+//ScaffoldWithNavigationRail
+class ScaffoldWithNavigationRail extends StatelessWidget {
+  const ScaffoldWithNavigationRail({
+    super.key,
+    required this.body,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+  });
+  final Widget body;
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+      resizeToAvoidBottomInset: false,
+      body: Row(
+        children: [
+          NavigationRail(
+            selectedIndex: selectedIndex,
+            onDestinationSelected: onDestinationSelected,
+            labelType: NavigationRailLabelType.all,
+            destinations: <NavigationRailDestination>[
+              NavigationRailDestination(
+                label: const Text('Canvas'),
+                icon: Icon(MdiIcons.fromString('artboard')),
+              ),
+              NavigationRailDestination(
+                label: const Text('My Drawings'),
+                icon: Icon(MdiIcons.fromString('file-multiple')),
+              ),
+              NavigationRailDestination(
+                label: const Text('Me'),
+                icon: Icon(MdiIcons.fromString('account')),
+              ),
+            ],
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          // This is the main content.
+          Expanded(
+            child: body,
+          ),
+        ],
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+//Remove Scroll Glow
+class RemoveScrollGlow extends ScrollBehavior {
+  @override
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
   }
 }
