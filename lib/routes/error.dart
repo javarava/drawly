@@ -26,6 +26,13 @@ class ErrorRoute extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: Text(
+                    '$error',
+                    style: AppTheme.text22ExtraBold(),
+                  ),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
                     'Something went wrong',
                     style: AppTheme.text22ExtraBold(),
                   ),
@@ -34,16 +41,10 @@ class ErrorRoute extends StatelessWidget {
                 TextButton(
                   onPressed: () => context.go('/'),
                   child: const Text(
-                    'Go to Canvas',
+                    'Go Home',
                   ),
                 ),
                 const SizedBox(height: 30),
-                TextButton(
-                  onPressed: () => context.pop(),
-                  child: const Text(
-                    'Go Back',
-                  ),
-                ),
               ],
             ),
           ),

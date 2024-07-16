@@ -44,7 +44,7 @@ class UserProvider with ChangeNotifier {
       final drawingsFile = await readAllDrawingsFile();
       if (drawingsFile.isEmpty) {
         //debugPrint('Drawings file does not exist or empty');
-        allDrawings = null;
+        allDrawings = [];
         notifyListeners();
       } else {
         allDrawings = drawingsFile;
@@ -110,6 +110,18 @@ class UserProvider with ChangeNotifier {
   //Set user age
   void addUserAge(int item) {
     userAge = (item);
+    notifyListeners();
+  }
+
+  //Update user details
+  void addAllDrawings(List drawings) {
+    allDrawings = drawings;
+    notifyListeners();
+  }
+
+  //add a new drawing line to all drawings
+  void addNewDrawing(Map? item) {
+    allDrawings!.add(item);
     notifyListeners();
   }
 }

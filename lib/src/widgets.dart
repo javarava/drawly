@@ -412,3 +412,14 @@ integerOnlyTextFormatter() {
     //LengthLimitingTextInputFormatter(3),
   ];
 }
+
+//divider
+dividerGray1() {
+  return Divider(
+    thickness: 1,
+    height: 0,
+    indent: 0,
+    endIndent: 0,
+    color: drawlyBlack.shade100,
+  );
+}

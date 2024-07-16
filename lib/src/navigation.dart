@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '/providers/user_provider.dart';
 import '/main.dart';
-import '/routes/canvas.dart';
+import '/routes/mycanvas.dart';
 import '/routes/mydrawings.dart';
 import '/routes/me.dart';
 import '/routes/welcome.dart';
@@ -116,7 +116,7 @@ final goRouter = GoRouter(
                 context: context,
                 state: state,
                 key: UniqueKey,
-                child: const Canvas(),
+                child: const MyCanvas(),
               ),
             ),
           ],
@@ -210,9 +210,9 @@ final goRouter = GoRouter(
       }
     } else {
       if (welcome || addprofile) {
-        return null;
-      } else {
         return '/welcome';
+      } else {
+        return null;
       }
     }
   },

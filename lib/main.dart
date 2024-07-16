@@ -15,7 +15,7 @@ void main() async {
   // Turn off the # in the URLs on the web
   usePathUrlStrategy();
 
-  //Handle erros
+  //Handle errors
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details);
     if (kReleaseMode) {
@@ -43,7 +43,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       debugShowCheckedModeBanner: false,
       title: 'Drawly',
       theme: AppTheme.lightTheme(),
-      //darkTheme: AppTheme.lightTheme(),
+      //darkTheme: AppTheme.darkTheme(),
       //Remove Scroll Glow
       builder: (context, child) {
         return ScrollConfiguration(
@@ -63,8 +63,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 }
 
-// Stateful navigation based on:
-// https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stateful_shell_route.dart
+//Use goRouter ScaffoldWithNestedNavigation to for navigation logic
 class ScaffoldWithNestedNavigation extends StatelessWidget {
   const ScaffoldWithNestedNavigation({
     Key? key,
@@ -87,15 +86,15 @@ class ScaffoldWithNestedNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      //Check if screen size is less than 450px to display Scaffold as ScaffoldWithNavigationBar
       if (constraints.maxWidth < 450) {
+        //Check if screen size is less than 450px to display Scaffold as ScaffoldWithNavigationBar
         return ScaffoldWithNavigationBar(
           navigationShell,
           navigationShell.currentIndex,
           goBranch,
         );
-        //If screen is greater than 450px, display Scaffold as ScaffoldWithNavigationRail
       } else {
+        //If screen is greater than 450px, display Scaffold as ScaffoldWithNavigationRail
         return ScaffoldWithNavigationRail(
           body: navigationShell,
           selectedIndex: navigationShell.currentIndex,
@@ -146,11 +145,11 @@ class _ScaffoldWithNavigationBarState extends State<ScaffoldWithNavigationBar> {
             icon: Icon(MdiIcons.fromString('artboard')),
             selectedIcon: Icon(MdiIcons.fromString('artboard')),
             title: Text(
-              "Canvas",
+              "My Canvas",
               style: AppTheme.buttonNavigationText(),
             ),
             selectedTitle: Text(
-              "Canvas",
+              "My Canvas",
               style: AppTheme.buttonNavigationSelectedText(),
             ),
           ),
@@ -208,7 +207,7 @@ class ScaffoldWithNavigationRail extends StatelessWidget {
             labelType: NavigationRailLabelType.all,
             destinations: <NavigationRailDestination>[
               NavigationRailDestination(
-                label: const Text('Canvas'),
+                label: const Text('My Canvas'),
                 icon: Icon(MdiIcons.fromString('artboard')),
               ),
               NavigationRailDestination(

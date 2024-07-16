@@ -799,6 +799,7 @@ class AppTheme {
 
   static grey1OutlinedFieldWithHint(String hintText) {
     return InputDecoration(
+      isDense: true,
       hintText: hintText,
       hintStyle: const TextStyle(fontSize: 12),
       border: AppTheme.appBorderGrey1(),
@@ -1063,6 +1064,23 @@ class AppTheme {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+      decoration: BoxDecoration(
+        border: Border.all(style: BorderStyle.none),
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+        color: drawlyBlack.shade900,
+      ),
+      child: Text(
+        text,
+        style: AppTheme.text18InvertedBold(),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  static blackButtonContainer8(String text) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       decoration: BoxDecoration(
         border: Border.all(style: BorderStyle.none),
         borderRadius: const BorderRadius.all(Radius.circular(10.0)),

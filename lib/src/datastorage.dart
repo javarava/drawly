@@ -1,5 +1,7 @@
 //import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:drawly/src/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 
@@ -46,12 +48,18 @@ Future<List> readAllDrawingsFile() async {
 }
 
 //Write a user drawing in a text file on user's device
-Future<File> writeDrawing(String filename, Map? drawing) async {
+Future<File> writeDrawing(String filename, List? drawing) async {
   final directory = await getApplicationDocumentsDirectory();
   final localPath = directory.path;
-  final file = File('$localPath/drawings/$filename.txt');
+
+  //Creates the drawings directory if it doesn't exist.
+  String drawingsDir = "drawings";
+  String relativePath = "$localPath/$drawingsDir";
+  await Directory(relativePath).create(recursive: true);
+
+  final file = File('$relativePath/$filename.txt');
   final jsonStr = jsonEncode(drawing);
-  //debugPrint('Drawing written to file!');
+  debugPrint('File written to: ${file.path}');
   // Write the file
   return file.writeAsString(jsonStr);
 }
@@ -64,4 +72,19 @@ Future<String> readDrawingFile(String filename) async {
   //debugPrint('Drawing File Path: $localPath/pin.txt');
   final jsonStr = await file.readAsString();
   return jsonDecode(jsonStr);
+}
+
+//Delete a drawing on user's device
+Future deleteDrawing(String filename) async {
+  try {
+    final directory = await getApplicationDocumentsDirectory();
+    final localPath = directory.path;
+    //Get drawings directory
+    String relativePath = "$localPath/drawings";
+    final file = File('$relativePath$filename.txt');
+    await file.delete();
+  } catch (e) {
+    debugPrint('An error occurred! $e');
+    toastInfoLong('An error occurred!');
+  }
 }
