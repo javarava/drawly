@@ -39,7 +39,7 @@ class _MyDrawingsState extends State<MyDrawings> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 //List drawings
-                myDrawings != null || myDrawings!.isEmpty
+                myDrawings != null && myDrawings!.isNotEmpty
                     ? ListView.separated(
                         // render the list
                         shrinkWrap: true,
@@ -141,6 +141,7 @@ class _MyDrawingsState extends State<MyDrawings> {
                         child: Text(
                           'You don\'t have any saved drawings.',
                           style: AppTheme.text16Bold(),
+                          textAlign: TextAlign.center,
                         ),
                       )
               ],
