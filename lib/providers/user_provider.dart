@@ -22,14 +22,12 @@ class UserProvider with ChangeNotifier {
   Future<void> readDetailsFromFile() async {
     try {
       final detailsFile = await readDetailsFile();
-      if (detailsFile!.isEmpty) {
-        //debugPrint('User details file does not exist or empty');
-        loggedinUser = null;
-        notifyListeners();
-      } else {
+      if (detailsFile!.isNotEmpty) {
         loggedinUser = detailsFile;
         //debugPrint('User details from file: $detailsFile');
-        notifyListeners();
+      } else {
+        //debugPrint('User details file does not exist or empty');
+        loggedinUser = null;
       }
     } catch (e) {
       debugPrint("An error occurred! Error: ${e.toString()}");

@@ -203,11 +203,7 @@ final goRouter = GoRouter(
 
     //Check if user is logged in and redirect accordingly
     if (loggedIn != null) {
-      if (welcome || addprofile) {
-        return '/';
-      } else {
-        return null;
-      }
+      return '/';
     } else {
       if (welcome || addprofile) {
         return null;
