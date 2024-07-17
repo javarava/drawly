@@ -112,8 +112,8 @@ class _MyDrawingsState extends State<MyDrawings> {
                                         ),
                                         onTap: () {
                                           //show delete alert dialog
-                                          showDeleteAlertDialog(
-                                              context, filename);
+                                          showDeleteAlertDialog(context,
+                                              filename, myDrawings![index]);
                                         },
                                       ),
                                     ),
@@ -156,6 +156,7 @@ class _MyDrawingsState extends State<MyDrawings> {
   showDeleteAlertDialog(
     BuildContext context,
     String filename,
+    Map itemToDelete,
   ) {
     // set up the buttons
     Widget cancelButton = TextButton(
@@ -178,12 +179,9 @@ class _MyDrawingsState extends State<MyDrawings> {
           List? allDrawings =
               Provider.of<UserProvider>(context, listen: false).allDrawings;
 
-          //Loop through List to delete drawing with filename
-          for (var drawing in allDrawings!) {
-            if (drawing.keys.toList().first == filename) {
-              allDrawings.remove(drawing);
-            }
-          }
+          //delete drawing from allDrawings
+          allDrawings!.removeWhere(
+              (element) => element.keys.first == itemToDelete.keys.first);
 
           //write new version to Provider
           context.read<UserProvider>().addAllDrawings(allDrawings);
@@ -192,7 +190,7 @@ class _MyDrawingsState extends State<MyDrawings> {
           writeAllDrawings(allDrawings);
 
           //delete the file
-          deleteDrawing('drawings/$filename');
+          deleteDrawing(filename);
 
           //display toast message
           toastInfoLong('$filename deleted!');
@@ -204,7 +202,7 @@ class _MyDrawingsState extends State<MyDrawings> {
 
           //pop route
         } catch (e) {
-          debugPrint('An error occurred during signout! $e');
+          debugPrint('An error occurred during deleting: $e');
 
           //display toast message
           toastInfoLong('An error occurred');

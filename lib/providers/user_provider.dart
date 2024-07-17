@@ -22,7 +22,7 @@ class UserProvider with ChangeNotifier {
   Future<void> readDetailsFromFile() async {
     try {
       final detailsFile = await readDetailsFile();
-      if (detailsFile.isEmpty) {
+      if (detailsFile!.isEmpty) {
         //debugPrint('User details file does not exist or empty');
         loggedinUser = null;
         notifyListeners();
@@ -42,7 +42,7 @@ class UserProvider with ChangeNotifier {
   Future<void> readAllDrawings() async {
     try {
       final drawingsFile = await readAllDrawingsFile();
-      if (drawingsFile.isEmpty) {
+      if (drawingsFile!.isEmpty) {
         //debugPrint('Drawings file does not exist or empty');
         allDrawings = [];
         notifyListeners();
