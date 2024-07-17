@@ -88,3 +88,17 @@ Future deleteDrawing(String filename) async {
     toastInfoLong('An error occurred!');
   }
 }
+
+//Delete a file on user device
+Future deleteFile(String filename) async {
+  try {
+    final directory = await getApplicationDocumentsDirectory();
+    final localPath = directory.path;
+    //Get file path
+    final file = File('$localPath/$filename.txt');
+    await file.delete();
+  } catch (e) {
+    debugPrint('An error occurred! $e');
+    toastInfoLong('An error occurred!');
+  }
+}

@@ -240,7 +240,6 @@ class _MyCanvasState extends State<MyCanvas> {
                       height: 40,
                       child: IconButton(
                         icon: Icon(MdiIcons.fromString('format-color-fill')),
-                        tooltip: 'Change background color',
                         onPressed: () {
                           showColorIcons(context);
                         },

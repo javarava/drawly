@@ -20,7 +20,7 @@ class MyDrawings extends StatefulWidget {
 class _MyDrawingsState extends State<MyDrawings> {
   @override
   Widget build(BuildContext context) {
-    //Get user data from provider
+    //Get user drawings from provider
     myDrawings = context.watch<UserProvider>().allDrawings;
 
     return SafeArea(
@@ -30,96 +30,97 @@ class _MyDrawingsState extends State<MyDrawings> {
           systemOverlayStyle: SystemUiOverlayStyle.light,
           title: const Text('My Drawings'),
         ),
-        body: Container(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              //List drawings
-              myDrawings != null || myDrawings!.isEmpty
-                  ? ListView.separated(
-                      // render the list
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: myDrawings!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        String filename =
-                            myDrawings![index].keys.toList().first;
-                        var content = myDrawings![index][filename];
-                        return SizedBox(
-                          width: double.infinity,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: InkWell(
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 8, 0, 8),
-                                        child: Row(
-                                          children: [
-                                            const SizedBox(
-                                              width: 60,
-                                              height: 60,
-                                              child: Image(
-                                                fit: BoxFit.fitHeight,
-                                                image: AssetImage(
-                                                    'assets/images/drawly-gray.png'),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                //List drawings
+                myDrawings != null || myDrawings!.isEmpty
+                    ? ListView.separated(
+                        // render the list
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: myDrawings!.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          String filename =
+                              myDrawings![index].keys.toList().first;
+                          var content = myDrawings![index][filename];
+                          return SizedBox(
+                            width: double.infinity,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: InkWell(
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 8, 0, 8),
+                                          child: Row(
+                                            children: [
+                                              const SizedBox(
+                                                width: 60,
+                                                height: 60,
+                                                child: Image(
+                                                  fit: BoxFit.fitHeight,
+                                                  image: AssetImage(
+                                                      'assets/images/drawly-gray.png'),
+                                                ),
                                               ),
-                                            ),
-                                            const SizedBox(
-                                              width: 20,
-                                            ),
-                                            SizedBox(
-                                              child: Text(
-                                                filename,
-                                                style: AppTheme.text20Bold(),
+                                              const SizedBox(
+                                                width: 20,
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        //display file in canvas
-
-                                        //context.go('/my-canvas', extra: content);
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute<void>(
-                                            builder: (BuildContext context) =>
-                                                MyCanvas(
-                                              list: content,
-                                            ),
+                                              SizedBox(
+                                                child: Text(
+                                                  filename,
+                                                  style: AppTheme.text20Bold(),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: InkWell(
-                                      child: Icon(
-                                        MdiIcons.fromString('delete'),
-                                        size: 24,
-                                        color: drawlyBlack.shade300,
+                                        ),
+                                        onTap: () {
+                                          //display file in canvas
+
+                                          //context.go('/my-canvas', extra: content);
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute<void>(
+                                              builder: (BuildContext context) =>
+                                                  MyCanvas(
+                                                list: content,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       ),
-                                      onTap: () {
-                                        //show delete alert dialog
-                                        showDeleteAlertDialog(
-                                            context, filename);
-                                      },
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              /* (myDrawings![index] != myDrawings!.length - 1)
+                                    const SizedBox(width: 10),
+                                    SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: InkWell(
+                                        child: Icon(
+                                          MdiIcons.fromString('delete'),
+                                          size: 24,
+                                          color: drawlyBlack.shade300,
+                                        ),
+                                        onTap: () {
+                                          //show delete alert dialog
+                                          showDeleteAlertDialog(
+                                              context, filename);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                /* (myDrawings![index] != myDrawings!.length - 1)
                                   ? Column(
                                       children: [
                                         const SizedBox(height: 5),
@@ -128,21 +129,22 @@ class _MyDrawingsState extends State<MyDrawings> {
                                       ],
                                     )
                                   : Container(), */
-                            ],
-                          ),
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) =>
-                          dividerGray1(),
-                    )
-                  : SizedBox(
-                      width: double.infinity,
-                      child: Text(
-                        'You don\'t have any saved drawings.',
-                        style: AppTheme.text16Bold(),
-                      ),
-                    )
-            ],
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) =>
+                            dividerGray1(),
+                      )
+                    : SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          'You don\'t have any saved drawings.',
+                          style: AppTheme.text16Bold(),
+                        ),
+                      )
+              ],
+            ),
           ),
         ),
       ),
@@ -189,7 +191,7 @@ class _MyDrawingsState extends State<MyDrawings> {
           writeAllDrawings(allDrawings);
 
           //delete the file
-          deleteDrawing(filename);
+          deleteDrawing('drawings/$filename');
 
           //display toast message
           toastInfoLong('$filename deleted!');
