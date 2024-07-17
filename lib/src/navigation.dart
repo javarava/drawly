@@ -210,9 +210,9 @@ final goRouter = GoRouter(
       }
     } else {
       if (welcome || addprofile) {
-        return '/welcome';
-      } else {
         return null;
+      } else {
+        return '/welcome';
       }
     }
   },
